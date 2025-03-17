@@ -1,7 +1,7 @@
 import multiprocessing
 import requests
 
-def downloader(url, thread_id, total_chars, lock):
+def downloader(url, process_id, total_chars, lock):
     response = requests.get(url).json()  
     response_str = str(response)
     num_chars = len(response_str)
@@ -11,7 +11,7 @@ def downloader(url, thread_id, total_chars, lock):
         total_chars.value += num_chars
 
     
-    print("Process " + str(thread_id) + " downloaded " + str(num_chars) + " chars from " + url)
+    print("Process " + str(process_id) + " downloaded " + str(num_chars) + " chars from " + url)
 
 def main():
     
@@ -25,14 +25,14 @@ def main():
     ]
      
     
-    total_chars = multiprocessing.Value('i', 0)  
+    TOTAL_CHARS = multiprocessing.Value('i', 0)  
     
    
     lock = multiprocessing.Lock()
 
     processes = []
     for i, url in enumerate(urls):
-        process = multiprocessing.Process(target=downloader, args=(url, i+1, total_chars, lock))
+        process = multiprocessing.Process(target=downloader, args=(url, i+1, TOTAL_CHARS, lock))
         process.start()
         processes.append(process)
 
@@ -41,7 +41,7 @@ def main():
         process.join()
 
     
-    print("Total number of chars downloaded is: " + str(total_chars.value))
+    print("Total number of chars downloaded is: " + str(TOTAL_CHARS.value))
 
 if __name__ == "__main__":
     main()
