@@ -25,14 +25,14 @@ def main():
     ]
      
     
-    TOTAL_CHARS = multiprocessing.Value('i', 0)  
+    total_chars = multiprocessing.Value('i', 0)  
     
    
     lock = multiprocessing.Lock()
 
     processes = []
     for i, url in enumerate(urls):
-        process = multiprocessing.Process(target=downloader, args=(url, i+1, TOTAL_CHARS, lock))
+        process = multiprocessing.Process(target=downloader, args=(url, i+1, total_chars, lock))
         process.start()
         processes.append(process)
 
@@ -41,7 +41,7 @@ def main():
         process.join()
 
     
-    print("Total number of chars downloaded is: " + str(TOTAL_CHARS.value))
+    print("Total number of chars downloaded is: " + str(total_chars.value))
 
 if __name__ == "__main__":
     main()
