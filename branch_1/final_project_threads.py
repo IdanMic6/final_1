@@ -2,13 +2,15 @@ import threading
 import requests
  
 TOTAL_CHARS = 0
+lock = threading.Lock()
 
 def downloader(url, thread_id):
     global TOTAL_CHARS
     response = requests.get(url).json()  
     response_str = str(response)
     num_chars = len(response_str)
-    TOTAL_CHARS += num_chars
+    with lock:
+     TOTAL_CHARS += num_chars
 
     print("Thread " + str(thread_id) + " downloaded " + str(num_chars) + " chars from " + url)
     
